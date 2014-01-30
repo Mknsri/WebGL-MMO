@@ -52,7 +52,7 @@ Renderer.prototype.render = function () {
 
 Renderer.prototype.prepareWorld = function() {
 				this.worldGeometry = new THREE.PlaneGeometry(512, 512);
-				this.worldTexture = new THREE.ImageUtils.loadTexture ( '../images/groundtex.jpg');
+				this.worldTexture = new THREE.ImageUtils.loadTexture ( '../art/groundtex.jpg');
 				this.worldTexture.wrapS = THREE.RepeatWrapping;
 				this.worldTexture.wrapT = THREE.RepeatWrapping;
 				this.worldTexture.repeat.set (512/128,512/128 );
