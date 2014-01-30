@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+	<!-- 3rd party libraries -->
+	<script src='js/lib/three.min.js'></script>
+	<script src='js/lib/stats.min.js'></script>
+	<script src='js/lib/threex.keyboardstate.js'></script>
+	<!-- mkGame libraries -->
+	<script src='js/render.js' ></script>
+	<script src='js/keyboard.js'></script>
+	<script src='js/client_main.js' /></script>
+  </head>
+  <body onload="game = new mkGame(); game.initGame(document.body);">
+    <h1><%= title %></h1>
+    <p>Welcome to <%= title %></p>
+  </body>
+</html>
