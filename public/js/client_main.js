@@ -6,8 +6,7 @@ function mkGame() {
 	this.mkKeyboard = new Keyboard();
 	this.mkStats = new Stats();
 	
-	this.activePlayers = [];	
-	
+	this.activePlayers = [];
 };
 
 mkGame.prototype.initGame = function(gameElement) {
@@ -15,7 +14,7 @@ mkGame.prototype.initGame = function(gameElement) {
 		console.log("Initializing game");
 		this.mkRenderer.init(gameElement);
 		this.mkRenderer.prepareWorld();
-		
+
 		this.gameElement.appendChild(this.mkStats.domElement);
 		
 		this.start();
@@ -36,7 +35,6 @@ mkGame.prototype.handleKeyboard = function() {
 		for (var i = 0; i < kb.length; i++) {
 			switch (kb[i]) {
 				case "LEFT":
-					console.log("left pressed");
 					this.mkRenderer.camera.rotation.y += 0.1;
 					break;
 				case "RIGHT":
