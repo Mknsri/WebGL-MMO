@@ -13,10 +13,11 @@ Renderer.prototype.init = function(elementToRenderIn) {
     this.renderElement = elementToRenderIn;
     
     this.scene = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(75, this.SCREEN_SIZE_W/this.SCREEN_SIZE_H, 0.1, 1000);
-    
+    this.camera = new THREE.PerspectiveCamera(75, this.SCREEN_SIZE_W/this.SCREEN_SIZE_H, 0.1, 10000);
+		
     this.glRenderer = new THREE.WebGLRenderer();
     this.glRenderer.setSize(this.SCREEN_SIZE_W, this.SCREEN_SIZE_H);
+	this.glRenderer.shadowMapEnabled = true;
     
     console.log('Renderer intialized, creating geometry...');
     
@@ -29,16 +30,15 @@ Renderer.prototype.init = function(elementToRenderIn) {
     
     document.body.appendChild(this.glRenderer.domElement);
     
-    that = this;
-    this.renderElement.addEventListener('click', that.requestFullScreen);
+    renderHandle = this;
+	//this.renderElement.addEventListener('click', renderHandle.requestFullScreen);
     
     this.scene.add(this.cube);
 
-    this.camera.position.z = 5;
+    this.camera.position.z = 10;
 }
 
 Renderer.prototype.render = function () {
-    //requestAnimationFrame(this.render.bind(this));
 
     this.cube.rotation.y += 0.1;
     
@@ -51,23 +51,40 @@ Renderer.prototype.render = function () {
 }
 
 Renderer.prototype.prepareWorld = function() {
+	
+	// Sky
+	this.skyGeometry = new THREE.CubeGeometry( 10000, 10000, 10000, 1, 1, 1, null, true);
+	
+	this.skyTexture = new THREE.ImageUtils.loadTexture ( this.ARTPATH + 'sky.jpg');
+    this.skyMaterial = new THREE.MeshLambertMaterial({map: this.skyTexture});
+    this.skyMaterial.side = THREE.DoubleSide;
+	
+	
+    this.worldSky = new THREE.Mesh(this.skyGeometry,this.skyMaterial);
+	
+	// Ground
     this.worldGeometry = new THREE.PlaneGeometry(512, 512);
     this.worldTexture = new THREE.ImageUtils.loadTexture ( this.ARTPATH + 'groundtex.jpg');
     this.worldTexture.wrapS = THREE.RepeatWrapping;
     this.worldTexture.wrapT = THREE.RepeatWrapping;
-    this.worldTexture.repeat.set (512/128,512/128 );
+    this.worldTexture.repeat.set (512/128,512/128);
     
-    this.worldMaterial = new THREE.MeshBasicMaterial({map: this.worldTexture});
+    this.worldMaterial = new THREE.MeshLambertMaterial({map: this.worldTexture});
     this.worldMaterial.side = THREE.DoubleSide;
-    this.worldModel = new THREE.Mesh(this.worldGeometry,this.worldMaterial);
+	this.worldModel = new THREE.Mesh(this.worldGeometry, this.worldMaterial);
+	
+	this.worldModel.receiveShadow = true;
+	this.worldModel.castShadow = true;
     
     // Translate the world plane
     this.worldModel.position.y = -15;
     this.worldModel.rotation.x = 1.57;
     
     this.scene.add(this.worldModel);
+	this.scene.add(this.worldSky);
     
-    this.addAmbientLight();
+    //this.addAmbientLight();
+	this.addSunSpotlight();
     
 }
 
@@ -76,10 +93,18 @@ Renderer.prototype.addAmbientLight = function() {
     this.scene.add(this.ambientLight);
 }
 
+Renderer.prototype.addSunSpotlight = function() {
+	this.sunLight = new THREE.DirectionalLight(0xffffff);
+	this.sunLight.castShadow = true;
+	
+	this.sunLight.position.set(0,10,0);
+	this.sunLight.target.position.set(0,0,0);
+	this.scene.add(this.sunLight);
+}
+
 Renderer.prototype.requestFullScreen = function () {
     
-    element = that.renderElement;
-    console.log(that);
+    element = renderHandle.renderElement;
     element.requestFullScreen =
 	element.requestFullScreen    ||
 	element.mozRequestFullScreen ||

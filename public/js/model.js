@@ -3,6 +3,8 @@ function Model(path, scene) {
     this.x = 0;
     this.y = 0;
     this.z = 0;
+	this.rotation = 0;
+	
     this.modelLoaded = false;
     
     this.loadModel();
@@ -11,17 +13,29 @@ function Model(path, scene) {
 
 Model.prototype.loadModel = function (s, callback) {
     loader = new THREE.JSONLoader();
-    that = this;
-    loader.load( this.modelPath, that.addModelToScene);
+    modelHandle = this;
+    loader.load( this.modelPath, modelHandle.addModelToScene);
 }
 
 Model.prototype.addModelToScene = function(geometry, material) {
-    that.modelObj = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(material));
-    that.scene.add(that.modelObj);
-    console.log(material);
-    that.modelObj.position.x = that.x;
-    that.modelObj.position.y = that.y;
-    that.modelObj.position.z = that.z;
+	geometry.applyMatrix( new THREE.Matrix4().makeTranslation( -0.7, -3, 0));
+    modelHandle.modelObj = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(material));
+	modelHandle.modelObj.scale.set(1,1,1);
+    modelHandle.scene.add(modelHandle.modelObj);
+    modelHandle.modelObj.position.x = modelHandle.x;
+    modelHandle.modelObj.position.y = modelHandle.y;
+    modelHandle.modelObj.position.z = modelHandle.z;
     
-    that.modelLoaded = true;
+	modelHandle.modelObj.castShadow = true;
+	
+    modelHandle.modelLoaded = true;
+}
+
+Model.prototype.updateModel = function() {
+	if(modelHandle.modelLoaded) {
+		this.x = this.modelObj.position.x;
+		this.y = this.modelObj.position.y;
+		this.z = this.modelObj.position.z;
+		this.modelObj.rotation.y = this.rotation;
+	}
 }
